@@ -1,0 +1,77 @@
+#!/bin/sh
+
+if [ "$#" -lt 1 ]
+then
+    echo 'Need at least one argument built-qt5 $prefix foo'
+    exit -1
+fi
+
+if [ -z "$QT5BASE" ]
+then
+	echo "QT5BASE env variable must be set prior to running this script"
+	exit -1
+fi
+
+if [ -z "$QTDIR" ]
+then
+	echo "QTDIR env variable must be set prior to running this script"
+	exit -1
+fi
+
+
+function build {
+    echo "Building $1"
+    BUILD_PATH="$QTDIR/work/$1"
+    mkdir -p $BUILD_PATH
+    cd $BUILD_PATH
+    $PREFIX/bin/qmake "$QT5BASE/$1/$1.pro"
+    make
+    make install
+}
+
+PREFIX=$1
+shift
+
+CONFIGURE_OPTIONS="$1"
+shift
+
+BUILD_TYPE=$1
+shift
+
+if [ "$PREFIX" = "." ]; then
+    PREFIX=$PWD
+    echo "Adjusting prefix to $PREFIX"
+fi
+
+mkdir -p $QTDIR/work/qtbase
+cd $QTDIR/work/qtbase
+
+echo "Configuring Qt with $CONFIGURE_OPTIONS"
+$QT5BASE/qtbase/configure -opensource -confirm-license -release -make libs -prefix $PREFIX $CONFIGURE_OPTIONS
+#work arounds for filthy problems
+cd src/plugins; make qmake; cd ../../
+make
+make install
+
+if [ "$BUILD_TYPE" = "minimal" ]; then
+#base
+MODULES="qtjsbackend qtxmlpatterns qtdeclarative"
+else
+#optimistic
+#MODULES=( qtimageformats qtsvg qtjsbackend qtscript qtxmlpatterns qtdeclarative qt3d qtgraphicaleffects qtjsondb qtlocation qtdocgallery )
+MODULES="qtimageformats qtsvg qtjsbackend qtscript qtxmlpatterns qtdeclarative qt3d qtgraphicaleffects qtjsondb qtlocation qtdocgallery"
+fi
+
+echo "Building: $MODULES"
+
+for module in $MODULES
+do
+    build "$module"
+done
+
+echo "Building $@"
+
+for module in "$@"
+do
+    build "$module"
+done
