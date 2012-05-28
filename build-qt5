@@ -85,6 +85,6 @@ mkdir -p $BUILD_PATH
 cd $BUILD_PATH
 
 export WEBKITOUTPUTDIR=$PWD/WebKitBuild
-perl $QT5BASE/qtwebkit/Tools/Scripts/build-webkit --qt --qmake=$PREFIX/bin/qmake --install-libs=$PREFIX --release
+perl $QT5BASE/qtwebkit/Tools/Scripts/build-webkit --qt --qmake=$PREFIX/bin/qmake --install-libs=$PREFIX --release --no-webgl
 
 echo "Time to die peacefully"
