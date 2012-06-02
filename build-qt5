@@ -1,29 +1,20 @@
 #!/bin/sh
 #For wisdom look here: http://qt-project.org/wiki/Building_Qt_5_from_Git
-#For automation look here:
+#For filthy automation look here
 
-if [ "$#" -lt 1 ]
-then
+if [ "$#" -lt 1 ]; then
     echo 'Need at least one argument built-qt5 $prefix foo'
     exit -1
 fi
 
-if [ -z "$QT5BASE" ]
-then
+if [ -z "$QT5BASE" ]; then
 	echo "QT5BASE env variable must be set prior to running this script"
 	exit -1
 fi
 
-if [ -z "$QTDIR" ]
-then
-	echo "QTDIR env variable must be set prior to running this script"
-	exit -1
-fi
-
-
 function build {
     echo "Building $1"
-    BUILD_PATH="$QTDIR/work/$1"
+    BUILD_PATH="$QT_BUILD_DIR/work/$1"
     mkdir -p $BUILD_PATH
     cd $BUILD_PATH
     $PREFIX/bin/qmake "$QT5BASE/$1/$1.pro"
@@ -40,28 +31,37 @@ shift
 BUILD_TYPE=$1
 shift
 
+ADDITIONAL_MODULES="$1"
+shift
+
 if [ "$PREFIX" = "." ]; then
     PREFIX=$PWD
-    echo "Adjusting prefix to $PREFIX"
 fi
 
-mkdir -p $QTDIR/work/qtbase
-cd $QTDIR/work/qtbase
+if [ -z "$QT_BUILD_DIR" ]; then
+    QT_BUILD_DIR=$PREFIX
+fi
+
+mkdir -p $QT_BUILD_DIR/work/qtbase
+cd $QT_BUILD_DIR/work/qtbase
 
 echo "Configuring Qt with $CONFIGURE_OPTIONS"
-$QT5BASE/qtbase/configure -opensource -confirm-license -release -make libs -prefix $PREFIX $CONFIGURE_OPTIONS
+$QT5BASE/qtbase/configure -opensource -confirm-license -v -optimized-qmake \
+                          -reduce-relocations -reduce-exports -separate-debug-info \
+                          -release -make libs -prefix $PREFIX \
+                          $CONFIGURE_OPTIONS
+#Try to remove madness
 #work arounds for filthy problems
-cd src/plugins; make qmake; cd ../../
+#cd src/plugins; make qmake; cd ../../
 make
 make install
 
-if [ "$BUILD_TYPE" = "minimal" ]; then
-#base
+if [ "$BUILD_TYPE" = "all" ]; then
+MODULES="qtimageformats qtsvg qtjsbackend qtscript qtxmlpatterns qtdeclarative qtsensors qt3d qtgraphicaleffects qtjsondb qtlocation qtdocgallery"
+elif [ "$BUILD_TYPE" = "minimal" ]; then
 MODULES="qtjsbackend qtxmlpatterns qtdeclarative"
 else
-#optimistic
-#MODULES=( qtimageformats qtsvg qtjsbackend qtscript qtxmlpatterns qtdeclarative qt3d qtgraphicaleffects qtjsondb qtlocation qtdocgallery )
-MODULES="qtimageformats qtsvg qtjsbackend qtscript qtxmlpatterns qtdeclarative qtsensors qt3d qtgraphicaleffects qtjsondb qtlocation qtdocgallery"
+MODULES="qtjsbackend qtxmlpatterns qtdeclarative qtsensors qt3d qtgraphicaleffects qtjsondb qtlocation"
 fi
 
 echo "Building: $MODULES"
@@ -71,16 +71,16 @@ do
     build "$module"
 done
 
-echo "Building $@"
+echo "Building $ADDITIONAL_MODULES"
 
-for module in "$@"
+for module in $ADDITIONAL_MODULES
 do
     build "$module"
 done
 
 echo "Time to die"
 
-BUILD_PATH="$QTDIR/work/qtwebkit"
+BUILD_PATH="$QT_BUILD_DIR/work/qtwebkit"
 mkdir -p $BUILD_PATH
 cd $BUILD_PATH
 
