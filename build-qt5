@@ -61,7 +61,7 @@ MODULES="qtimageformats qtsvg qtjsbackend qtscript qtxmlpatterns qtdeclarative q
 elif [ "$BUILD_TYPE" = "minimal" ]; then
 MODULES="qtjsbackend qtxmlpatterns qtdeclarative"
 else
-MODULES="qtjsbackend qtxmlpatterns qtdeclarative qtsensors qt3d qtgraphicaleffects qtjsondb qtlocation"
+MODULES="qtjsbackend qtscript qtxmlpatterns qtdeclarative qtsensors qt3d qtgraphicaleffects qtjsondb qtlocation"
 fi
 
 echo "Building: $MODULES"
