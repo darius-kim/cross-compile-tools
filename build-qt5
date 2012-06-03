@@ -35,6 +35,8 @@ if [ -z "$QT_BUILD_DIR" ]; then
     QT_BUILD_DIR=$PREFIX
 fi
 
+export QTDIR=$PREFIX
+
 mkdir -p $QT_BUILD_DIR/work/qtbase
 cd $QT_BUILD_DIR/work/qtbase
 
@@ -43,9 +45,6 @@ $QT5BASE/qtbase/configure -opensource -confirm-license -v -optimized-qmake \
                           -reduce-relocations -reduce-exports -separate-debug-info \
                           -release -make libs -prefix $PREFIX \
                           $CONFIGURE_OPTIONS
-#Try to remove madness
-#work arounds for filthy problems
-#cd src/plugins; make qmake; cd ../../
 make
 make install
 
