@@ -23,16 +23,9 @@ function build {
 }
 
 PREFIX=$1
-shift
-
-CONFIGURE_OPTIONS="$1"
-shift
-
-BUILD_TYPE=$1
-shift
-
-ADDITIONAL_MODULES="$1"
-shift
+CONFIGURE_OPTIONS=$2
+BUILD_TYPE=$3
+ADDITIONAL_MODULES=$4
 
 if [ "$PREFIX" = "." ]; then
     PREFIX=$PWD
