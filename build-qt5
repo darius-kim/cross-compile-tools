@@ -41,8 +41,9 @@ mkdir -p $QT_BUILD_DIR/work/qtbase
 cd $QT_BUILD_DIR/work/qtbase
 
 echo "Configuring Qt with $CONFIGURE_OPTIONS"
+#-separate-debug-info -useful- reintroduce
 $QT5BASE/qtbase/configure -opensource -confirm-license -v -optimized-qmake \
-                          -reduce-relocations -reduce-exports -separate-debug-info \
+                          -reduce-relocations -reduce-exports \
                           -release -make libs -prefix $PREFIX \
                           $CONFIGURE_OPTIONS
 make
@@ -77,6 +78,6 @@ mkdir -p $BUILD_PATH
 cd $BUILD_PATH
 
 export WEBKITOUTPUTDIR=$PWD/WebKitBuild
-perl $QT5BASE/qtwebkit/Tools/Scripts/build-webkit --qt --qmake=$PREFIX/bin/qmake --install-libs=$PREFIX --release --no-webgl
+perl $QT5BASE/qtwebkit/Tools/Scripts/build-webkit --qt --qmake=$PREFIX/bin/qmake --install-libs=$PREFIX --release --no-webgl --no-3d-rendering --no-svg
 
 echo "Time to die peacefully"
