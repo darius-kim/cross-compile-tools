@@ -2,6 +2,9 @@
 #For wisdom look here: http://qt-project.org/wiki/Building_Qt_5_from_Git
 #For filthy automation look here
 
+#Die (painfully!) on error
+set -e
+
 if [ "$#" -lt 1 ]; then
     echo 'Need at least one argument built-qt5 $prefix foo'
     exit -1
