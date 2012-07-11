@@ -16,7 +16,7 @@ if [ -x $TOOLCHAIN ]; then
     DEB_MULTI_ARCH_MADNESS=$ROOTFS/usr/lib/$MACHINE
 fi
 
-CURRENTDIR=$PWD
+INITIAL_DIR=$PWD
 
 function adjustSymLinks
 {
@@ -32,13 +32,14 @@ function adjustSymLinks
     sudo ln -s $newPath $i;
     fi
     done
+    cd $INITIAL_DIR
 }
 
 adjustSymLinks $ROOTFS/usr/lib "../.."
 
-if [ -n "$DEB_MULTI_ARCH_MADNESS" -a -d "$DEB_MULTI_ARCH_MADNESS" ]; then
+echo "Testing for existence of potential debian multi-arch dir: $DEB_MULTI_ARCH_MADNESS"
+
+if [ -n "$DEB_MULTI_ARCH_MADNESS" -a -e "$DEB_MULTI_ARCH_MADNESS" ]; then
     echo "Debian multiarch dir exists, adjusting"
     adjustSymLinks $DEB_MULTI_ARCH_MADNESS "../../.."
 fi
-
-cd $CURRENTDIR
