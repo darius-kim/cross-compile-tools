@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #This script is ugly, feel free to fix it
 
 if [ "$#" -ne 2 ]; then
