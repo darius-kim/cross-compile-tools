@@ -2,7 +2,7 @@
 #This script is ugly, feel free to fix it
 
 if [ "$#" -ne 2 ]; then
-    echo "usage ./cmd target-rootfs target-toolchain"
+    echo "usage ./cmd target-rootfs path-to-target-toolchain-compiler"
     exit -1
 fi
 
