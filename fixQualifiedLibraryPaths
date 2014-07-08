@@ -1,20 +1,14 @@
 #!/bin/bash
 #This script is ugly, feel free to fix it
 
-if [ "$#" -ne 2 ]; then
-    echo "usage ./cmd target-rootfs path-to-target-toolchain-compiler"
+if [ "$#" -ne 1 ]; then
+    echo "usage ./cmd target-rootfs"
     exit -1
 fi
 
 #passed args
 ROOTFS=$1
-TOOLCHAIN=$2
-
-if [ -x $TOOLCHAIN ]; then
-    echo "Passed valid toolchain"
-    MACHINE=$($TOOLCHAIN -dumpmachine)
-    DEB_MULTI_ARCH_MADNESS=$ROOTFS/usr/lib/$MACHINE
-fi
+TOOLCHAIN=arm-linux-gnueabihf
 
 INITIAL_DIR=$PWD
 
